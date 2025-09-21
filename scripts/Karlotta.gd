@@ -19,22 +19,17 @@ enum STATES {
 	SLEEPING,
 }
 
-var isHungry : bool = false
-var isTired : bool = false
-var isBored : bool = false
 var isPanic : bool = false
-
 var state : STATES = STATES.IDLE
+
+signal sleeping
 
 # Catch need signals
 
-
 func _on_warn(type):
-	flag_need(type, true)
 	update_state(type, Need.Action.WARN)
 
 func _on_calm(type):
-	flag_need(type, false)
 	update_state(type, Need.Action.CALM)
 	
 func _on_panic(type):
@@ -51,13 +46,6 @@ func _on_button_button_down():
 func _on_button_button_up():
 	$Sprite.texture = preload("res://sprites/karlotta/stance.png")
 
-func flag_need(dt : Need.Type, on : bool):
-	match dt:
-		Need.Type.HUNGRY:
-			isHungry = on
-		Need.Type.BORED:
-			isBored = on
-
 func update_state(dt : Need.Type, dx : Need.Action):
 	match state:
 		STATES.IDLE: 
@@ -66,6 +54,10 @@ func update_state(dt : Need.Type, dx : Need.Action):
 			hungry.call(dt, dx)
 		STATES.BORED, STATES.EVIL: 
 			bored.call(dt, dx)
+		STATES.SLEEPY:
+			sleep.call(dt, dx)
+		STATES.SLEEPING:
+			bedjie.call(dt, dx)
 	update_sprite()
 	return
 
@@ -99,7 +91,8 @@ var idle: Callable = func(dt : Need.Type, dx : Need.Action):
 			state = STATES.HUNGRY
 		Need.Type.BORED:
 			state = STATES.BORED
-
+		Need.Type.EEP:
+			state = STATES.SLEEPY
 
 # State transitions
 
@@ -116,11 +109,34 @@ var hungry: Callable = func(dt : Need.Type, dx : Need.Action):
 var bored: Callable = func(dt : Need.Type, dx : Need.Action):
 	match dx:
 		Need.Action.CALM:
-			state = STATES.IDLE
+			if dt == Need.Type.BORED:
+				state = STATES.IDLE
 		Need.Action.WARN:
 			match dt:  # Swap to priorities
-				Need.Type.HUNGRY: STATES.HUNGRY
-				Need.Type.EEP: STATES.SLEEPY
+				Need.Type.HUNGRY: 
+					state = STATES.HUNGRY
+				Need.Type.EEP: 
+					state = STATES.SLEEPY
 		Need.Action.PANIC:
 			state = STATES.EVIL
-	
+
+var sleep: Callable = func(dt : Need.Type, dx : Need.Action):
+	match dx:
+		Need.Action.CALM:
+			if dt == Need.Type.EEP:
+				state = STATES.IDLE
+		Need.Action.WARN:
+			match dt:  # Swap to priorities
+				Need.Type.HUNGRY: 
+					state = STATES.HUNGRY
+		Need.Action.PANIC:
+			sleeping.emit()
+			state = STATES.SLEEPING
+
+var bedjie: Callable = func(dt : Need.Type, dx : Need.Action):
+	if dt == Need.Type.EEP and dx == Need.Action.CALM:
+		state = STATES.IDLE
+
+# TODO - Store next state and revert to it after calm instead of just idle
+
+# TODO - Fix bug where sleeping means you never need to sleep again?

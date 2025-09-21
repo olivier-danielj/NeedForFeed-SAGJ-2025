@@ -1,12 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cd7vi3k43hehw"]
+[gd_scene load_steps=6 format=3 uid="uid://cd7vi3k43hehw"]
 
 [ext_resource type="Texture2D" uid="uid://devqjgurgc7mb" path="res://sprites/backgrounds/BG.png" id="1_sca46"]
 [ext_resource type="Script" path="res://scripts/Karlotta.gd" id="2_gh6wi"]
 [ext_resource type="Texture2D" uid="uid://h4gfdqoqkr30" path="res://sprites/karlotta/stance.png" id="2_jgo6f"]
-[ext_resource type="Texture2D" uid="uid://cgm0idfnt7eae" path="res://sprites/bars/love behind.png" id="4_uyggl"]
-[ext_resource type="Texture2D" uid="uid://ccksgiosymswx" path="res://sprites/bars/love.png" id="5_avemn"]
 [ext_resource type="PackedScene" uid="uid://c0us3wxiuk1py" path="res://nodes/bar.tscn" id="7_du5iu"]
-[ext_resource type="Texture2D" uid="uid://cksdtobuhkvrd" path="res://sprites/bars/feed.png" id="10_g3rgw"]
+[ext_resource type="PackedScene" uid="uid://dbph1ym0xerud" path="res://nodes/button.tscn" id="7_ywlxn"]
 
 [node name="Main" type="Node2D"]
 
@@ -18,41 +16,66 @@ texture = ExtResource("1_sca46")
 script = ExtResource("2_gh6wi")
 
 [node name="Sprite" type="Sprite2D" parent="Karlotta"]
-position = Vector2(729, 518)
+position = Vector2(707, 434)
 texture = ExtResource("2_jgo6f")
 
 [node name="Button" type="Button" parent="Karlotta"]
 modulate = Color(1, 1, 1, 0)
-offset_left = 504.0
-offset_top = 286.0
-offset_right = 954.0
-offset_bottom = 758.0
+offset_left = 482.0
+offset_top = 202.0
+offset_right = 932.0
+offset_bottom = 674.0
+metadata/_edit_use_anchors_ = true
 
-[node name="LoveBar" type="TextureProgressBar" parent="."]
-offset_left = 83.0
-offset_top = 301.0
-offset_right = 304.0
-offset_bottom = 379.0
-value = 100.0
-texture_under = ExtResource("4_uyggl")
-texture_progress = ExtResource("5_avemn")
+[node name="BarHungry" parent="." instance=ExtResource("7_du5iu")]
 
-[node name="Feed" type="Sprite2D" parent="."]
-position = Vector2(1233, 828)
-texture = ExtResource("10_g3rgw")
-
-[node name="Hunger" parent="." instance=ExtResource("7_du5iu")]
-position = Vector2(1, 3)
-
-[node name="Boredom" parent="." instance=ExtResource("7_du5iu")]
-position = Vector2(-3, 117)
+[node name="BarBored" parent="." instance=ExtResource("7_du5iu")]
+position = Vector2(0, 128)
 need = 1
 
+[node name="BarLove" parent="." instance=ExtResource("7_du5iu")]
+position = Vector2(0, 256)
+need = 2
+
+[node name="Fish" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(128, 768)
+
+[node name="Mouse" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(384, 768)
+need = 1
+
+[node name="Bed" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(1152, 136)
+need = 3
+
+[node name="Litter" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(1152, 392)
+need = 4
+
+[node name="Job" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(1152, 768)
+need = 6
+
+[node name="Pig" parent="." instance=ExtResource("7_ywlxn")]
+position = Vector2(896, 768)
+need = 5
+
+[connection signal="sleeping" from="Karlotta" to="Bed" method="_on_karlotta_sleeping"]
 [connection signal="button_down" from="Karlotta/Button" to="Karlotta" method="_on_button_button_down"]
 [connection signal="button_up" from="Karlotta/Button" to="Karlotta" method="_on_button_button_up"]
-[connection signal="calm" from="Hunger" to="Karlotta" method="_on_calm"]
-[connection signal="panic" from="Hunger" to="Karlotta" method="_on_panic"]
-[connection signal="warn" from="Hunger" to="Karlotta" method="_on_warn"]
-[connection signal="calm" from="Boredom" to="Karlotta" method="_on_calm"]
-[connection signal="panic" from="Boredom" to="Karlotta" method="_on_panic"]
-[connection signal="warn" from="Boredom" to="Karlotta" method="_on_warn"]
+[connection signal="calm" from="BarHungry" to="Karlotta" method="_on_calm"]
+[connection signal="panic" from="BarHungry" to="Karlotta" method="_on_panic"]
+[connection signal="warn" from="BarHungry" to="Karlotta" method="_on_warn"]
+[connection signal="calm" from="BarBored" to="Karlotta" method="_on_calm"]
+[connection signal="panic" from="BarBored" to="Karlotta" method="_on_panic"]
+[connection signal="warn" from="BarBored" to="Karlotta" method="_on_warn"]
+[connection signal="fill" from="Fish" to="BarHungry" method="_on_fill"]
+[connection signal="fill" from="Fish" to="Litter" method="_on_fish_fill"]
+[connection signal="fill" from="Mouse" to="BarBored" method="_on_fill"]
+[connection signal="fill" from="Mouse" to="Bed" method="_on_mouse_fill"]
+[connection signal="fill" from="Bed" to="Karlotta" method="_on_calm"]
+[connection signal="panic" from="Bed" to="Karlotta" method="_on_panic"]
+[connection signal="warn" from="Bed" to="Karlotta" method="_on_warn"]
+[connection signal="fill" from="Job" to="Pig" method="_on_job_fill"]
+[connection signal="fill" from="Pig" to="Fish" method="_on_pig_fill"]
+[connection signal="fill" from="Pig" to="Mouse" method="_on_pig_fill"]

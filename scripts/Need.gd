@@ -1,6 +1,6 @@
 class_name Need
 
-enum Type {HUNGRY, BORED, LOVE, EEP}
+enum Type {HUNGRY, BORED, LOVE, EEP, STINK, MONEY, JOB}
 enum Action {NONE, WARN, PANIC, CALM}
 
 const mid_min = 40

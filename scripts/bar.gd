@@ -15,11 +15,15 @@ var once_panic : bool = false
 # Sprites
 const SPR_HUNGRY = preload("res://sprites/bars/hungry.png")
 const SPR_HUNGRY_BEHIND = preload("res://sprites/bars/hungry behind.png")
-const SPD_HUNGRY = 1
+const SPD_HUNGRY = 0.5
 
 const SPR_BORED = preload("res://sprites/bars/bored.png")
 const SPR_BORED_BEHIND = preload("res://sprites/bars/bored behind.png")
-const SPD_BORED = 2
+const SPD_BORED = 0.25
+
+const SPR_LOVE = preload("res://sprites/buttons/love.png")
+const SPR_LOVE_BEHIND = preload("res://sprites/buttons/love_behind.png")
+const SPD_LOVE = 0.05
 
 const frequency = 0.1
 
@@ -28,7 +32,7 @@ func _ready():
 	set_need()
 	$Display.min_value = bar_min
 	$Display.max_value = bar_max
-	$Timer.start(frequency)
+	$Tick.start(frequency)
 	
 
 # Set bar's display sprites based on selected type
@@ -42,6 +46,10 @@ func set_need():
 			$Display.texture_progress = SPR_BORED
 			$Display.texture_under = SPR_BORED_BEHIND
 			$Display.step = SPD_BORED
+		Need.Type.LOVE:
+			$Display.texture_progress = SPR_LOVE
+			$Display.texture_under = SPR_LOVE_BEHIND
+			$Display.step = SPD_LOVE
 
 # Emit warn or panic if value passes threshold
 func _on_display_value_changed(value):
@@ -63,8 +71,11 @@ func _on_display_value_changed(value):
 			panic.emit(need)
 			print("PANIC")
 			# TODO - countdown instead
-			$Timer.stop()
+			$Tick.stop()
 
 func _on_timer_timeout():
 	$Display.value += $Display.step
-	$Timer.start(frequency)
+	$Tick.start(frequency)
+
+func _on_fill(type):
+	$Display.value -= 10
