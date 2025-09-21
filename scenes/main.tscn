@@ -1,14 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://cd7vi3k43hehw"]
+[gd_scene load_steps=8 format=3 uid="uid://cd7vi3k43hehw"]
 
 [ext_resource type="Texture2D" uid="uid://devqjgurgc7mb" path="res://sprites/backgrounds/BG.png" id="1_sca46"]
 [ext_resource type="Script" path="res://scripts/Karlotta.gd" id="2_gh6wi"]
 [ext_resource type="Texture2D" uid="uid://h4gfdqoqkr30" path="res://sprites/karlotta/stance.png" id="2_jgo6f"]
 [ext_resource type="Texture2D" uid="uid://cgm0idfnt7eae" path="res://sprites/bars/love behind.png" id="4_uyggl"]
 [ext_resource type="Texture2D" uid="uid://ccksgiosymswx" path="res://sprites/bars/love.png" id="5_avemn"]
-[ext_resource type="Texture2D" uid="uid://ubluwe6iqmwd" path="res://sprites/bars/bored behind.png" id="6_erdox"]
-[ext_resource type="Texture2D" uid="uid://dca8i7m362fww" path="res://sprites/bars/bored.png" id="7_msq43"]
-[ext_resource type="Texture2D" uid="uid://b22jue2c3yyks" path="res://sprites/bars/hungry behind.png" id="8_vdgur"]
-[ext_resource type="Texture2D" uid="uid://b0ekodqcu0acc" path="res://sprites/bars/hungry.png" id="9_tbib1"]
+[ext_resource type="PackedScene" uid="uid://c0us3wxiuk1py" path="res://nodes/bar.tscn" id="7_du5iu"]
 [ext_resource type="Texture2D" uid="uid://cksdtobuhkvrd" path="res://sprites/bars/feed.png" id="10_g3rgw"]
 
 [node name="Main" type="Node2D"]
@@ -40,27 +37,22 @@ value = 100.0
 texture_under = ExtResource("4_uyggl")
 texture_progress = ExtResource("5_avemn")
 
-[node name="BoredBar" type="TextureProgressBar" parent="."]
-offset_left = 71.0
-offset_top = 168.0
-offset_right = 408.0
-offset_bottom = 246.0
-value = 50.0
-texture_under = ExtResource("6_erdox")
-texture_progress = ExtResource("7_msq43")
-
-[node name="HungerBar" type="TextureProgressBar" parent="."]
-offset_left = 65.0
-offset_top = 53.0
-offset_right = 402.0
-offset_bottom = 131.0
-value = 70.0
-texture_under = ExtResource("8_vdgur")
-texture_progress = ExtResource("9_tbib1")
-
 [node name="Feed" type="Sprite2D" parent="."]
 position = Vector2(1233, 828)
 texture = ExtResource("10_g3rgw")
 
+[node name="Hunger" parent="." instance=ExtResource("7_du5iu")]
+position = Vector2(1, 3)
+
+[node name="Boredom" parent="." instance=ExtResource("7_du5iu")]
+position = Vector2(-3, 117)
+need = 1
+
 [connection signal="button_down" from="Karlotta/Button" to="Karlotta" method="_on_button_button_down"]
 [connection signal="button_up" from="Karlotta/Button" to="Karlotta" method="_on_button_button_up"]
+[connection signal="calm" from="Hunger" to="Karlotta" method="_on_calm"]
+[connection signal="panic" from="Hunger" to="Karlotta" method="_on_panic"]
+[connection signal="warn" from="Hunger" to="Karlotta" method="_on_warn"]
+[connection signal="calm" from="Boredom" to="Karlotta" method="_on_calm"]
+[connection signal="panic" from="Boredom" to="Karlotta" method="_on_panic"]
+[connection signal="warn" from="Boredom" to="Karlotta" method="_on_warn"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c0us3wxiuk1py"]
 
 [ext_resource type="Texture2D" uid="uid://b22jue2c3yyks" path="res://sprites/bars/hungry behind.png" id="1_581x2"]
-[ext_resource type="Script" path="res://nodes/bar.gd" id="1_sf3it"]
+[ext_resource type="Script" path="res://scripts/bar.gd" id="1_sf3it"]
 [ext_resource type="Texture2D" uid="uid://b0ekodqcu0acc" path="res://sprites/bars/hungry.png" id="2_3dioe"]
 
 [node name="Bar" type="Node2D"]
@@ -15,4 +15,7 @@ offset_bottom = 131.0
 texture_under = ExtResource("1_581x2")
 texture_progress = ExtResource("2_3dioe")
 
+[node name="Timer" type="Timer" parent="."]
+
 [connection signal="value_changed" from="Display" to="." method="_on_display_value_changed"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
