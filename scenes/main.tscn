@@ -1,0 +1,66 @@
+[gd_scene load_steps=11 format=3 uid="uid://cd7vi3k43hehw"]
+
+[ext_resource type="Texture2D" uid="uid://devqjgurgc7mb" path="res://sprites/backgrounds/BG.png" id="1_sca46"]
+[ext_resource type="Script" path="res://scripts/Karlotta.gd" id="2_gh6wi"]
+[ext_resource type="Texture2D" uid="uid://h4gfdqoqkr30" path="res://sprites/karlotta/stance.png" id="2_jgo6f"]
+[ext_resource type="Texture2D" uid="uid://cgm0idfnt7eae" path="res://sprites/bars/love behind.png" id="4_uyggl"]
+[ext_resource type="Texture2D" uid="uid://ccksgiosymswx" path="res://sprites/bars/love.png" id="5_avemn"]
+[ext_resource type="Texture2D" uid="uid://ubluwe6iqmwd" path="res://sprites/bars/bored behind.png" id="6_erdox"]
+[ext_resource type="Texture2D" uid="uid://dca8i7m362fww" path="res://sprites/bars/bored.png" id="7_msq43"]
+[ext_resource type="Texture2D" uid="uid://b22jue2c3yyks" path="res://sprites/bars/hungry behind.png" id="8_vdgur"]
+[ext_resource type="Texture2D" uid="uid://b0ekodqcu0acc" path="res://sprites/bars/hungry.png" id="9_tbib1"]
+[ext_resource type="Texture2D" uid="uid://cksdtobuhkvrd" path="res://sprites/bars/feed.png" id="10_g3rgw"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(723, 514)
+texture = ExtResource("1_sca46")
+
+[node name="Karlotta" type="Node" parent="."]
+script = ExtResource("2_gh6wi")
+
+[node name="Sprite" type="Sprite2D" parent="Karlotta"]
+position = Vector2(729, 518)
+texture = ExtResource("2_jgo6f")
+
+[node name="Button" type="Button" parent="Karlotta"]
+modulate = Color(1, 1, 1, 0)
+offset_left = 504.0
+offset_top = 286.0
+offset_right = 954.0
+offset_bottom = 758.0
+
+[node name="LoveBar" type="TextureProgressBar" parent="."]
+offset_left = 83.0
+offset_top = 301.0
+offset_right = 304.0
+offset_bottom = 379.0
+value = 100.0
+texture_under = ExtResource("4_uyggl")
+texture_progress = ExtResource("5_avemn")
+
+[node name="BoredBar" type="TextureProgressBar" parent="."]
+offset_left = 71.0
+offset_top = 168.0
+offset_right = 408.0
+offset_bottom = 246.0
+value = 50.0
+texture_under = ExtResource("6_erdox")
+texture_progress = ExtResource("7_msq43")
+
+[node name="HungerBar" type="TextureProgressBar" parent="."]
+offset_left = 65.0
+offset_top = 53.0
+offset_right = 402.0
+offset_bottom = 131.0
+value = 70.0
+texture_under = ExtResource("8_vdgur")
+texture_progress = ExtResource("9_tbib1")
+
+[node name="Feed" type="Sprite2D" parent="."]
+position = Vector2(1233, 828)
+texture = ExtResource("10_g3rgw")
+
+[connection signal="button_down" from="Karlotta/Button" to="Karlotta" method="_on_button_button_down"]
+[connection signal="button_up" from="Karlotta/Button" to="Karlotta" method="_on_button_button_up"]

@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfiblg4v30r80"]
+
+[ext_resource type="Texture2D" uid="uid://b7cwj25fscx57" path="res://sprites/backgrounds/Win.png" id="1_dugcf"]
+[ext_resource type="Texture2D" uid="uid://ccksgiosymswx" path="res://sprites/bars/love.png" id="2_mucuq"]
+
+[node name="Win" type="Node2D"]
+
+[node name="Win" type="Sprite2D" parent="."]
+position = Vector2(724, 508)
+texture = ExtResource("1_dugcf")
+
+[node name="Love" type="Sprite2D" parent="."]
+position = Vector2(1002, 869)
+texture = ExtResource("2_mucuq")
