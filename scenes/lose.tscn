@@ -1,9 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://d2bq7vrehopla"]
+[gd_scene load_steps=3 format=3 uid="uid://d2bq7vrehopla"]
 
 [ext_resource type="Texture2D" uid="uid://7xeqkc5ncikr" path="res://sprites/backgrounds/End.png" id="1_2b43y"]
+[ext_resource type="AudioStream" uid="uid://csfjxt82cqxlo" path="res://audio/GameOver.ogg" id="2_3htau"]
 
 [node name="Lose" type="Node2D"]
 
 [node name="End" type="Sprite2D" parent="."]
 position = Vector2(724, 511)
 texture = ExtResource("1_2b43y")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_3htau")
+autoplay = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(720, 512)
+scale = Vector2(6.36, 1)
+zoom = Vector2(0.8, 0.8)

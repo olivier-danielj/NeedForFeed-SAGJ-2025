@@ -16,4 +16,8 @@ modulate = Color(1, 1, 1, 0)
 offset_right = 1455.0
 offset_bottom = 1032.0
 
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(729, 508)
+zoom = Vector2(0.8, 0.8)
+
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

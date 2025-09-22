@@ -19,47 +19,54 @@ enum STATES {
 	SLEEPING,
 }
 
-var isPanic : bool = false
+var feeling = {
+	Need.Type.HUNGRY: Need.Action.CALM,
+	Need.Type.BORED: Need.Action.CALM,
+	Need.Type.EEP: Need.Action.CALM,
+}
+
 var state : STATES = STATES.IDLE
 
 signal sleeping
+signal awake
 
 # Catch need signals
 
 func _on_warn(type):
-	update_state(type, Need.Action.WARN)
+	feel(type, Need.Action.WARN)
 
 func _on_calm(type):
-	update_state(type, Need.Action.CALM)
+	feel(type, Need.Action.CALM)
 	
 func _on_panic(type):
-	isPanic = true
-	update_state(type, Need.Action.PANIC)
+	feel(type, Need.Action.PANIC)
+	
+func _on_meltdown(type):
+	if type == Need.Type.LOVE:
+		get_tree().change_scene_to_file("res://scenes/win.tscn")
+	else:
+		get_tree().change_scene_to_file("res://scenes/lose.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	update_state()
 
-func _on_button_button_down():
-	$Sprite.texture = preload("res://sprites/karlotta/sniffs.png")
+func feel(dt : Need.Type, dx : Need.Action): 
+	feeling[dt] = dx
+	update_state()
 
-func _on_button_button_up():
-	$Sprite.texture = preload("res://sprites/karlotta/stance.png")
+func isCalm(dt : Need.Type) -> bool: return not (isWarn(dt) or isPanic(dt))
+func isWarn(dt : Need.Type) -> bool: return feeling[dt] == Need.Action.WARN
+func isPanic(dt : Need.Type) -> bool: return feeling[dt] == Need.Action.PANIC
 
-func update_state(dt : Need.Type, dx : Need.Action):
-	match state:
-		STATES.IDLE: 
-			idle.call(dt, dx)
-		STATES.HUNGRY, STATES.HANGRY: 
-			hungry.call(dt, dx)
-		STATES.BORED, STATES.EVIL: 
-			bored.call(dt, dx)
-		STATES.SLEEPY:
-			sleep.call(dt, dx)
-		STATES.SLEEPING:
-			bedjie.call(dt, dx)
+func update_state():
+	var a = state
+	transition()
+	var b = state
+	if isWoke(a, b):
+		awake.emit()
+		$Meow.play()
 	update_sprite()
-	return
 
 const spr_idle = preload("res://sprites/karlotta/sit.png")
 const spr_hungry = preload("res://sprites/karlotta/lick.png")
@@ -82,61 +89,54 @@ func update_sprite():
 		STATES.SLEEPY: $Sprite.texture = spr_sleepy
 		STATES.SLEEPING: $Sprite.texture = spr_sleeping
 
-# Idle can bounce to hungry or bored based on needs
-var idle: Callable = func(dt : Need.Type, dx : Need.Action):
-	if dx != Need.Action.WARN:
-		return
+var priorities: Array[Need.Type] = [Need.Type.EEP, Need.Type.HUNGRY, Need.Type.BORED]
+
+func next(dt : Need.Type) -> STATES:
 	match dt:
 		Need.Type.HUNGRY:
-			state = STATES.HUNGRY
+			if isCalm(dt): 
+				$Meow.stream = preload("res://audio/cat/Cat Lick 01 .wav")
+				$Meow.play()
+				return STATES.IDLE
+			if isWarn(dt): 
+				$Meow.stream = preload("res://audio/cat/Cat Meow Short 08 .wav")
+				$Meow.play()
+				return STATES.HUNGRY
+			if isPanic(dt): 
+				$Meow.stream = preload("res://audio/cat/Cat Groan 13 .wav")
+				$Meow.play()
+				return STATES.HANGRY
 		Need.Type.BORED:
-			state = STATES.BORED
+			if isCalm(dt): return STATES.IDLE
+			if isWarn(dt): 
+				$Meow.stream = preload("res://audio/cat/Cat Trill 10 .wav")
+				$Meow.play()
+				return STATES.BORED
+			if isPanic(dt): 
+				$Meow.stream = preload("res://audio/cat/Cat Groan 13 .wav")
+				$Meow.play()
+				return STATES.EVIL
 		Need.Type.EEP:
-			state = STATES.SLEEPY
+			if isCalm(dt): return STATES.IDLE
+			if isWarn(dt):
+				if state != STATES.SLEEPY:
+					$Meow.stream = preload("res://audio/cat/Cat Trill 10 .wav")
+					$Meow.play()
+				return STATES.SLEEPY
+			if isPanic(dt):
+				sleeping.emit()
+				return STATES.SLEEPING
+	return STATES.IDLE
 
-# State transitions
+func isWoke(a, b : STATES):
+	if a != STATES.SLEEPING: 
+		return false
+	else:
+		return a != b
 
-var hungry: Callable = func(dt : Need.Type, dx : Need.Action):
-	if dt != Need.Type.HUNGRY:
-		return # ignore all other needs
-	match dx:
-		Need.Action.CALM:
-			state = STATES.IDLE
-		Need.Action.PANIC:
-			state = STATES.HANGRY
-	return
-
-var bored: Callable = func(dt : Need.Type, dx : Need.Action):
-	match dx:
-		Need.Action.CALM:
-			if dt == Need.Type.BORED:
-				state = STATES.IDLE
-		Need.Action.WARN:
-			match dt:  # Swap to priorities
-				Need.Type.HUNGRY: 
-					state = STATES.HUNGRY
-				Need.Type.EEP: 
-					state = STATES.SLEEPY
-		Need.Action.PANIC:
-			state = STATES.EVIL
-
-var sleep: Callable = func(dt : Need.Type, dx : Need.Action):
-	match dx:
-		Need.Action.CALM:
-			if dt == Need.Type.EEP:
-				state = STATES.IDLE
-		Need.Action.WARN:
-			match dt:  # Swap to priorities
-				Need.Type.HUNGRY: 
-					state = STATES.HUNGRY
-		Need.Action.PANIC:
-			sleeping.emit()
-			state = STATES.SLEEPING
-
-var bedjie: Callable = func(dt : Need.Type, dx : Need.Action):
-	if dt == Need.Type.EEP and dx == Need.Action.CALM:
-		state = STATES.IDLE
-
-# TODO - Store next state and revert to it after calm instead of just idle
-
-# TODO - Fix bug where sleeping means you never need to sleep again?
+func transition():
+	for p in priorities:
+		if next(p) != STATES.IDLE:
+			state = next(p)
+			return
+	state = STATES.IDLE

@@ -20,9 +20,10 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=1440
-window/size/viewport_height=1024
-window/size/resizable=false
+window/size/viewport_height=819
+window/size/mode=2
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 mouse_cursor/custom_image="res://sprites/Paw.png"
 mouse_cursor/custom_image_hotspot=Vector2(20, 18)
 

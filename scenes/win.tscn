@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dfiblg4v30r80"]
 
-[ext_resource type="Texture2D" uid="uid://b7cwj25fscx57" path="res://sprites/backgrounds/Win.png" id="1_dugcf"]
-[ext_resource type="Texture2D" uid="uid://ccksgiosymswx" path="res://sprites/bars/love.png" id="2_mucuq"]
+[ext_resource type="Texture2D" uid="uid://20ha88ntigbx" path="res://sprites/backgrounds/Win.png" id="1_dugcf"]
+[ext_resource type="AudioStream" uid="uid://c4oomkbjcnr5j" path="res://audio/You_re in the Future.ogg" id="3_0wamd"]
 
 [node name="Win" type="Node2D"]
 
@@ -9,6 +9,11 @@
 position = Vector2(724, 508)
 texture = ExtResource("1_dugcf")
 
-[node name="Love" type="Sprite2D" parent="."]
-position = Vector2(1002, 869)
-texture = ExtResource("2_mucuq")
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_0wamd")
+autoplay = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(720, 512)
+scale = Vector2(6.36, 1)
+zoom = Vector2(0.8, 0.8)

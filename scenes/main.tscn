@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://cd7vi3k43hehw"]
+[gd_scene load_steps=9 format=3 uid="uid://cd7vi3k43hehw"]
 
 [ext_resource type="Texture2D" uid="uid://devqjgurgc7mb" path="res://sprites/backgrounds/BG.png" id="1_sca46"]
 [ext_resource type="Script" path="res://scripts/Karlotta.gd" id="2_gh6wi"]
 [ext_resource type="Texture2D" uid="uid://h4gfdqoqkr30" path="res://sprites/karlotta/stance.png" id="2_jgo6f"]
+[ext_resource type="AudioStream" uid="uid://c0eqr87t2p3ey" path="res://audio/cat/Cat Meow Short 08 .wav" id="4_cajd1"]
+[ext_resource type="AudioStream" uid="uid://dtaelmybxanrq" path="res://audio/Groovy booty.ogg" id="6_bb62r"]
 [ext_resource type="PackedScene" uid="uid://c0us3wxiuk1py" path="res://nodes/bar.tscn" id="7_du5iu"]
 [ext_resource type="PackedScene" uid="uid://dbph1ym0xerud" path="res://nodes/button.tscn" id="7_ywlxn"]
+[ext_resource type="Script" path="res://scenes/AudioStreamPlayer.gd" id="8_a042f"]
 
 [node name="Main" type="Node2D"]
 
@@ -19,13 +22,10 @@ script = ExtResource("2_gh6wi")
 position = Vector2(707, 434)
 texture = ExtResource("2_jgo6f")
 
-[node name="Button" type="Button" parent="Karlotta"]
-modulate = Color(1, 1, 1, 0)
-offset_left = 482.0
-offset_top = 202.0
-offset_right = 932.0
-offset_bottom = 674.0
-metadata/_edit_use_anchors_ = true
+[node name="Tick" type="Timer" parent="Karlotta"]
+
+[node name="Meow" type="AudioStreamPlayer" parent="Karlotta"]
+stream = ExtResource("4_cajd1")
 
 [node name="BarHungry" parent="." instance=ExtResource("7_du5iu")]
 
@@ -60,15 +60,30 @@ need = 6
 position = Vector2(896, 768)
 need = 5
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_bb62r")
+autoplay = true
+script = ExtResource("8_a042f")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(720, 512)
+scale = Vector2(6.36, 1)
+zoom = Vector2(0.8, 0.8)
+
+[connection signal="awake" from="Karlotta" to="Fish" method="_on_karlotta_awake"]
+[connection signal="awake" from="Karlotta" to="Mouse" method="_on_karlotta_awake"]
+[connection signal="awake" from="Karlotta" to="Bed" method="_on_karlotta_awake"]
+[connection signal="sleeping" from="Karlotta" to="Fish" method="_on_karlotta_sleeping"]
+[connection signal="sleeping" from="Karlotta" to="Mouse" method="_on_karlotta_sleeping"]
 [connection signal="sleeping" from="Karlotta" to="Bed" method="_on_karlotta_sleeping"]
-[connection signal="button_down" from="Karlotta/Button" to="Karlotta" method="_on_button_button_down"]
-[connection signal="button_up" from="Karlotta/Button" to="Karlotta" method="_on_button_button_up"]
 [connection signal="calm" from="BarHungry" to="Karlotta" method="_on_calm"]
+[connection signal="meltdown" from="BarHungry" to="Karlotta" method="_on_meltdown"]
 [connection signal="panic" from="BarHungry" to="Karlotta" method="_on_panic"]
 [connection signal="warn" from="BarHungry" to="Karlotta" method="_on_warn"]
 [connection signal="calm" from="BarBored" to="Karlotta" method="_on_calm"]
 [connection signal="panic" from="BarBored" to="Karlotta" method="_on_panic"]
 [connection signal="warn" from="BarBored" to="Karlotta" method="_on_warn"]
+[connection signal="meltdown" from="BarLove" to="Karlotta" method="_on_meltdown"]
 [connection signal="fill" from="Fish" to="BarHungry" method="_on_fill"]
 [connection signal="fill" from="Fish" to="Litter" method="_on_fish_fill"]
 [connection signal="fill" from="Mouse" to="BarBored" method="_on_fill"]
@@ -79,3 +94,4 @@ need = 5
 [connection signal="fill" from="Job" to="Pig" method="_on_job_fill"]
 [connection signal="fill" from="Pig" to="Fish" method="_on_pig_fill"]
 [connection signal="fill" from="Pig" to="Mouse" method="_on_pig_fill"]
+[connection signal="finished" from="AudioStreamPlayer" to="AudioStreamPlayer" method="_on_finished"]

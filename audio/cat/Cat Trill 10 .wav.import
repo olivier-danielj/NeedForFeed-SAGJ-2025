@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://ct62xngp2it8e"
+path="res://.godot/imported/Cat Trill 10 .wav-4c661a0681a8c114b71e14e19f1690de.sample"
+
+[deps]
+
+source_file="res://audio/cat/Cat Trill 10 .wav"
+dest_files=["res://.godot/imported/Cat Trill 10 .wav-4c661a0681a8c114b71e14e19f1690de.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

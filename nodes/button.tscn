@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dbph1ym0xerud"]
+[gd_scene load_steps=5 format=3 uid="uid://dbph1ym0xerud"]
 
 [ext_resource type="Script" path="res://Button.gd" id="1_m67oj"]
 [ext_resource type="Texture2D" uid="uid://ddsg22k5lv7g3" path="res://sprites/buttons/fish.png" id="2_adr0o"]
+[ext_resource type="AudioStream" uid="uid://dh7iwv8x6dw8w" path="res://audio/monch.ogg" id="4_5ua57"]
 [ext_resource type="Texture2D" uid="uid://bpxe4y74juxpj" path="res://sprites/buttons/fish off.png" id="4_lp1yi"]
 
 [node name="Button" type="Node2D"]
@@ -25,7 +26,13 @@ offset_bottom = 171.0
 
 [node name="Tick" type="Timer" parent="."]
 
+[node name="Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_5ua57")
+
+[node name="Quiet" type="Timer" parent="."]
+
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
 [connection signal="button_up" from="Button" to="." method="_on_button_button_up"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="Tick" to="." method="_on_tick_timeout"]
+[connection signal="timeout" from="Quiet" to="." method="_on_quiet_timeout"]

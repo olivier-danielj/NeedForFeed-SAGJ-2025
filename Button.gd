@@ -35,30 +35,36 @@ func set_sprite() -> Resource:
 		Need.Type.HUNGRY:
 			$Progress.texture_progress = spr_fish
 			$Progress.texture_under = spr_fish_under
+			$Audio.stream = preload("res://audio/monch.ogg")
 		Need.Type.BORED:
 			$Progress.texture_progress = spr_mouse
 			$Progress.texture_under = spr_mouse_under
+			$Audio.stream = preload("res://audio/Bell.ogg")
 		Need.Type.EEP:
 			$Progress.texture_progress = spr_bed
 			$Progress.texture_under = spr_bed_under
 			$Progress.value = 100
 			$Progress.fill_mode = $Progress.FILL_BOTTOM_TO_TOP
+			$Audio.stream = preload("res://audio/eep.ogg")
 		Need.Type.STINK:
 			$Progress.texture_progress = spr_litter
 			$Progress.texture_under = spr_litter_under
 			$Progress.value = 100
 			$Progress.fill_mode = $Progress.FILL_TOP_TO_BOTTOM
+			$Audio.stream = preload("res://audio/litter.ogg")
 		Need.Type.MONEY:
 			$Progress.texture_progress = spr_money
 			$Progress.texture_under = spr_money_under
 			$Progress.value = 50
 			$Progress.fill_mode = $Progress.FILL_BOTTOM_TO_TOP
+			$Audio.stream = preload("res://audio/money.ogg")
 		Need.Type.JOB:
 			$Progress.texture_progress = spr_job
 			$Progress.texture_under = spr_job_under
 			$Progress.value = 0
 			$Progress.fill_mode = $Progress.FILL_BOTTOM_TO_TOP
 			$Tick.start(TICK)
+			$Audio.stream = preload("res://audio/jobbing.ogg")
 	return spr_fish
 
 func _on_button_pressed():
@@ -68,17 +74,24 @@ func _on_button_pressed():
 		Need.Type.HUNGRY, Need.Type.BORED:
 			$Progress.value -= 5
 			fill.emit(need)
+			$Audio.play()
+			$Quiet.start(1)
 		Need.Type.MONEY:
 			$Progress.value -= 20
 			fill.emit(need)
+			$Audio.play()
+			$Quiet.start(1)
 
 func _on_button_button_down():
 	match need:
 		Need.Type.JOB, Need.Type.STINK:
 			pressed = true
 			$Tick.start(TICK)
+			$Audio.play()
 
 func _on_button_button_up():
+	if pressed:
+		$Audio.stop()
 	pressed = false
 
 func _on_tick_timeout():
@@ -125,12 +138,28 @@ func _on_fish_fill(type):
 func _on_mouse_fill(type):
 	if need != Need.Type.EEP:
 		return
-	$Progress.value -= 10
+	$Progress.value -= 7
 	if $Progress.value <= 0:
 		panic.emit(need)
 	elif $Progress.value < 50:
 		warn.emit(need)
 
 func _on_karlotta_sleeping():
-	if need == Need.Type.EEP:
-		$Tick.start(TICK)
+	match need:
+		Need.Type.EEP:
+			$Tick.start(TICK)
+			$Audio.stream = preload("res://audio/eep.ogg")
+			$Audio.play()
+		Need.Type.HUNGRY, Need.Type.BORED:
+			$Button.disabled = true
+
+func _on_karlotta_awake():
+	match need:
+		Need.Type.EEP:
+			$Tick.stop()
+			$Audio.stop()
+		Need.Type.HUNGRY, Need.Type.BORED:
+			$Button.disabled = false
+
+func _on_quiet_timeout():
+	$Audio.stop()

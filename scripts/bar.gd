@@ -5,6 +5,7 @@ extends Node2D
 @export var bar_min = 0
 @export var bar_warn = 50
 
+signal meltdown(type: Need.Type)
 signal panic(type: Need.Type)
 signal warn(type: Need.Type)
 signal calm(type: Need.Type)
@@ -23,7 +24,7 @@ const SPD_BORED = 0.25
 
 const SPR_LOVE = preload("res://sprites/buttons/love.png")
 const SPR_LOVE_BEHIND = preload("res://sprites/buttons/love_behind.png")
-const SPD_LOVE = 0.05
+const SPD_LOVE = 0.08
 
 const frequency = 0.1
 
@@ -33,7 +34,6 @@ func _ready():
 	$Display.min_value = bar_min
 	$Display.max_value = bar_max
 	$Tick.start(frequency)
-	
 
 # Set bar's display sprites based on selected type
 func set_need():
@@ -53,6 +53,8 @@ func set_need():
 
 # Emit warn or panic if value passes threshold
 func _on_display_value_changed(value):
+	if value >= bar_max:
+		$Meltdown.start(3)
 	match Need.Act(value):
 		Need.Action.NONE:
 			if once_warn or once_panic:
@@ -64,14 +66,10 @@ func _on_display_value_changed(value):
 			if once_warn: return 
 			else: once_warn = true
 			warn.emit(need)
-			print("WARN")
 		Need.Action.PANIC:
 			if once_panic: return 
 			else: once_panic = true
 			panic.emit(need)
-			print("PANIC")
-			# TODO - countdown instead
-			$Tick.stop()
 
 func _on_timer_timeout():
 	$Display.value += $Display.step
@@ -79,3 +77,8 @@ func _on_timer_timeout():
 
 func _on_fill(type):
 	$Display.value -= 10
+
+func _on_meltdown_timeout():
+	if !once_panic:
+		return # calmed down
+	meltdown.emit(need)
